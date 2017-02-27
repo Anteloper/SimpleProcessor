@@ -9,8 +9,6 @@ The verilog code produced by the library is available in SimpleProcessor.v and w
 
 ##ISA
 ```
-  //-------------ISA-------------
-  //--------------------------
   //-- ADD
   //--    op  DR   S1 ...  S2  
   //--   0001 xxx xxx xxx xxx
