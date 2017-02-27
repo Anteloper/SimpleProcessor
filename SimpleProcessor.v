@@ -1,55 +1,7 @@
-/*The Verilog code for a Simple processor. Processor designed in Electric*/ 
-
-
-  //-------- Debug Controls ----
-  //--
-  //-- Display control
-  //--
-  //-- Select one of 8 busses to display
-  //--     sel[2:0] 
-  //--     (SW3, SW2, SW1):
-  //--
-  //-- Select LSB or MSB of bus
-  //--     swap
-  //--    (SW3):
-  //--         0:  display LSB
-  //--         1:  display MSB
-  //-- 
-
-
-
-  //-------------ISA-------------
-  //--------------------------
-  //-- ADD
-  //--    op  DR   S1 ...  S2  
-  //--   0001 xxx xxx xxx xxx
-  //-- AND
-  //--    op  DR   S1 ...  S2  
-  //--   0101 xxx xxx xxx xxx
-  //-- NOT
-  //--    op  DR   S1 ... ...  
-  //--   1001 xxx xxx xxx xxx
-  //-- LDR
-  //--    op  DR  ... ... BaseR  
-  //--   0110 xxx xxx xxx xxx
-  //-- STR
-  //--    op  ...  S1 ... BaseR  
-  //--   0111 xxx xxx xxx xxx
-  //-- LIM
-  //--    op  DR  ___imm9____  
-  //--   1101 xxx xxx xxx xxx
-  //-- LEA
-  //--    op  DR  ___????____  
-  //--   1110 xxx xxx xxx xxx
-  //-- LSB
-  //--   	op  DR	. __imm8___
-  //--   0010 xxx x xxxx xxxx
-  //-- MSB
-  //--    op  DR  . __imm8___
-  //--   0011 xxx x xxxx xxxx
-  //--------------------------
-  //------------------------
-
+/* Verilog for cell 'SimpleProcessor{sch}' from library 'SimpleProcessor' */
+/* Created on Mon Jul 18, 2016 16:06:03 */
+/* Last revised on Sun Dec 18, 2016 18:13:55 */
+/* Written on Sun Feb 26, 2017 23:10:47 by Electric VLSI Design System, version 9.06 */
 
 module SB_parts__SB_DFFE(C, D, E, Q);
   input C;
@@ -57,9 +9,16 @@ module SB_parts__SB_DFFE(C, D, E, Q);
   input E;
   output Q;
 
+  /* user-specified Verilog code */
+  //---- SB_DFFE
+  /**/    reg Q = 0;
+  /**/    always @(posedge C) begin
+  /**/        if (E) Q <= D;
+  /**/    end
+
 endmodule   /* SB_parts__SB_DFFE */
 
-module foo_4__DFFE16(D, clk, e, Q);
+module SimpleProcessor__DFFE16(D, clk, e, Q);
   input [15:0] D;
   input clk;
   input e;
@@ -81,7 +40,7 @@ module foo_4__DFFE16(D, clk, e, Q);
   SB_parts__SB_DFFE SB_DFFE_13(.C(clk), .D(D[13]), .E(e), .Q(Q[13]));
   SB_parts__SB_DFFE SB_DFFE_14(.C(clk), .D(D[14]), .E(e), .Q(Q[14]));
   SB_parts__SB_DFFE SB_DFFE_15(.C(clk), .D(D[15]), .E(e), .Q(Q[15]));
-endmodule   /* foo_4__DFFE16 */
+endmodule   /* SimpleProcessor__DFFE16 */
 
 module gateLevelParts__mux1_2x1(s, x0, x1, y);
   input s;
@@ -318,7 +277,7 @@ module gateLevelParts__not16(x, y);
   not _15(y[15], x[15]);
 endmodule   /* gateLevelParts__not16 */
 
-module foo_4__ALU(A, B, func, out);
+module SimpleProcessor__ALU(A, B, func, out);
   input [15:0] A;
   input [15:0] B;
   input [2:0] func;
@@ -356,7 +315,7 @@ module foo_4__ALU(A, B, func, out);
       .x001(AND[15:0]), .x010(NOT[15:0]), .x011(A[15:0]), .x100(B[15:0]), 
       .x101(zero[15:0]), .x110(one[15:0]), .x111(neg_1[15:0]), .y(out[15:0]));
   gateLevelParts__not16 not16_0(.x(A[15:0]), .y(NOT[15:0]));
-endmodule   /* foo_4__ALU */
+endmodule   /* SimpleProcessor__ALU */
 
 module SB_parts__BRAM_256x16(clk, raddr, re, waddr, wdata, we, rdata);
   input clk;
@@ -389,7 +348,7 @@ module SB_parts__BRAM_256x16(clk, raddr, re, waddr, wdata, we, rdata);
 
 endmodule   /* SB_parts__BRAM_256x16 */
 
-module foo_4__Instr_Decode(clk, opcode, out);
+module SimpleProcessor__Instr_Decode(clk, opcode, out);
   input clk;
   input [3:0] opcode;
   output [15:0] out;
@@ -433,9 +392,9 @@ module foo_4__Instr_Decode(clk, opcode, out);
   SB_parts__BRAM_256x16 Instr_Decode_ROM(.clk(clk), .raddr({addr[7], addr[6], 
       addr[5], addr[4], opcode[3], opcode[2], opcode[1], opcode[0]}), .re(re), 
       .waddr(waddr[7:0]), .wdata(wdata[15:0]), .we(we), .rdata(out[15:0]));
-endmodule   /* foo_4__Instr_Decode */
+endmodule   /* SimpleProcessor__Instr_Decode */
 
-module foo_4__DMEM(RW, addr, clk, in, out);
+module SimpleProcessor__DMEM(RW, addr, clk, in, out);
   input RW;
   input [15:0] addr;
   input clk;
@@ -467,10 +426,10 @@ module foo_4__DMEM(RW, addr, clk, in, out);
   not buf_0(net_15, RW);
   SB_parts__BRAM_256x16 DMEM_ram_0(.clk(clk), .raddr(addr[7:0]), .re(net_15), 
       .waddr(addr[7:0]), .wdata(in[15:0]), .we(RW), .rdata(out[15:0]));
-endmodule   /* foo_4__DMEM */
+endmodule   /* SimpleProcessor__DMEM */
 
-module foo_4__bus16_splitter(bus, bus0, bus1, bus10, bus11, bus12, bus13, 
-      bus14, bus15, bus2, bus3, bus4, bus5, bus6, bus7, bus8, bus9);
+module SimpleProcessor__bus16_splitter(bus, bus0, bus1, bus10, bus11, bus12, 
+      bus13, bus14, bus15, bus2, bus3, bus4, bus5, bus6, bus7, bus8, bus9);
   input [15:0] bus;
   output bus0;
   output bus1;
@@ -509,9 +468,9 @@ module foo_4__bus16_splitter(bus, bus0, bus1, bus10, bus11, bus12, bus13,
   buf buf_45(bus13, bus[13]);
   buf buf_46(bus14, bus[14]);
   buf buf_47(bus15, bus[15]);
-endmodule   /* foo_4__bus16_splitter */
+endmodule   /* SimpleProcessor__bus16_splitter */
 
-module foo_4__IMEM(addr, clk, out);
+module SimpleProcessor__IMEM(addr, clk, out);
   input [15:0] addr;
   input clk;
   output [15:0] out;
@@ -552,7 +511,7 @@ module foo_4__IMEM(addr, clk, out);
   /* automatically generated Verilog */
   SB_parts__BRAM_256x16 IMEM_ram_0(.clk(clk), .raddr(addr[7:0]), .re(re), 
       .waddr(waddr[7:0]), .wdata(wdata[15:0]), .we(we), .rdata(out[15:0]));
-endmodule   /* foo_4__IMEM */
+endmodule   /* SimpleProcessor__IMEM */
 
 module gateLevelParts__imm_LSB(in, \out[15] , \out[7] , \out[6] , \out[5] , 
       \out[4] , \out[3] , \out[2] , \out[1] , \out[0] );
@@ -724,7 +683,7 @@ module gateLevelParts__demux1_3x8(in, sel, y000, y001, y010, y011, y100, y101,
   not buf_2(nsel2, sel[2]);
 endmodule   /* gateLevelParts__demux1_3x8 */
 
-module foo_4__RegFile(DR, S1, S2, clk, in, we, SR1, SR2);
+module SimpleProcessor__RegFile(DR, S1, S2, clk, in, we, SR1, SR2);
   input [2:0] DR;
   input [2:0] S1;
   input [2:0] S2;
@@ -744,14 +703,22 @@ module foo_4__RegFile(DR, S1, S2, clk, in, we, SR1, SR2);
   wire [15:0] R6;
   wire [15:0] R7;
 
-  foo_4__DFFE16 DFFE16_0(.D(in[15:0]), .clk(clk), .e(net_77), .Q(R0[15:0]));
-  foo_4__DFFE16 DFFE16_1(.D(in[15:0]), .clk(clk), .e(net_80), .Q(R1[15:0]));
-  foo_4__DFFE16 DFFE16_2(.D(in[15:0]), .clk(clk), .e(net_86), .Q(R2[15:0]));
-  foo_4__DFFE16 DFFE16_3(.D(in[15:0]), .clk(clk), .e(net_204), .Q(R3[15:0]));
-  foo_4__DFFE16 DFFE16_4(.D(in[15:0]), .clk(clk), .e(net_93), .Q(R4[15:0]));
-  foo_4__DFFE16 DFFE16_5(.D(in[15:0]), .clk(clk), .e(net_103), .Q(R5[15:0]));
-  foo_4__DFFE16 DFFE16_6(.D(in[15:0]), .clk(clk), .e(net_99), .Q(R6[15:0]));
-  foo_4__DFFE16 DFFE16_7(.D(in[15:0]), .clk(clk), .e(net_108), .Q(R7[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_0(.D(in[15:0]), .clk(clk), .e(net_77), 
+      .Q(R0[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_1(.D(in[15:0]), .clk(clk), .e(net_80), 
+      .Q(R1[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_2(.D(in[15:0]), .clk(clk), .e(net_86), 
+      .Q(R2[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_3(.D(in[15:0]), .clk(clk), .e(net_204), 
+      .Q(R3[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_4(.D(in[15:0]), .clk(clk), .e(net_93), 
+      .Q(R4[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_5(.D(in[15:0]), .clk(clk), .e(net_103), 
+      .Q(R5[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_6(.D(in[15:0]), .clk(clk), .e(net_99), 
+      .Q(R6[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_7(.D(in[15:0]), .clk(clk), .e(net_108), 
+      .Q(R7[15:0]));
   gateLevelParts__demux1_3x8 demux1_3_0(.in(we), .sel(DR[2:0]), .y000(net_77), 
       .y001(net_80), .y010(net_86), .y011(net_204), .y100(net_93), 
       .y101(net_103), .y110(net_99), .y111(net_108));
@@ -761,7 +728,7 @@ module foo_4__RegFile(DR, S1, S2, clk, in, we, SR1, SR2);
   gateLevelParts__mux16_8x1 mux16_8x_1(.s(S2[2:0]), .x000(R0[15:0]), 
       .x001(R1[15:0]), .x010(R2[15:0]), .x011(R3[15:0]), .x100(R4[15:0]), 
       .x101(R5[15:0]), .x110(R6[15:0]), .x111(R7[15:0]), .y(SR2[15:0]));
-endmodule   /* foo_4__RegFile */
+endmodule   /* SimpleProcessor__RegFile */
 
 module gateLevelParts__imm_MSB(in, out);
   input [7:0] in;
@@ -822,7 +789,7 @@ module gateLevelParts__sext_9x16(in, \out[15] , \out[7] , \out[6] , \out[5] ,
   buf buf_8( \out[15] , in[8]);
 endmodule   /* gateLevelParts__sext_9x16 */
 
-module foo_4__swap_bytes_16(in, out);
+module SimpleProcessor__swap_bytes_16(in, out);
   input [15:0] in;
   output [15:0] out;
 
@@ -846,10 +813,10 @@ module foo_4__swap_bytes_16(in, out);
   buf buf_13(out[5], in[13]);
   buf buf_14(out[6], in[14]);
   buf buf_15(out[7], in[15]);
-endmodule   /* foo_4__swap_bytes_16 */
+endmodule   /* SimpleProcessor__swap_bytes_16 */
 
-module lab4(B10, B11, A10, A11, A9, B8, B9, D8, K11, P13, A2, A5, B3, B4, B5, 
-      B6, B7, C3, C8, F7, K9);
+module SimpleProcessor(B10, B11, A10, A11, A9, B8, B9, D8, K11, P13, A2, A5, 
+      B3, B4, B5, B6, B7, C3, C8, F7, K9);
   input B10;
   input B11;
   input A10;
@@ -929,170 +896,150 @@ module lab4(B10, B11, A10, A11, A9, B8, B9, D8, K11, P13, A2, A5, B3, B4, B5,
   wire [15:0] test_wire;
   wire [15:0] test_wire_2;
 
+  /* user-specified Verilog code */
+  //-------- Debug Controls ----
+  //--
+  //-- Display control
+  //--
+  //-- Select one of 8 busses to display
+  //--     sel[2:0] 
+  //--     (SW3, SW2, SW1):
+  //--
+  //-- Select LSB or MSB of bus
+  //--     swap
+  //--    (SW3):
+  //--         0:  display LSB
+  //--         1:  display MSB
+  //-- 
+  //-----------------------------
+  //--------------------------
+  //-- ADD
+  //--    op  DR   S1 ...  S2  
+  //--   0001 xxx xxx xxx xxx
+  //-- AND
+  //--    op  DR   S1 ...  S2  
+  //--   0101 xxx xxx xxx xxx
+  //-- NOT
+  //--    op  DR   S1 ... ...  
+  //--   1001 xxx xxx xxx xxx
+  //-- LDR
+  //--    op  DR  ... ... BaseR  
+  //--   0110 xxx xxx xxx xxx
+  //-- STR
+  //--    op  ...  S1 ... BaseR  
+  //--   0111 xxx xxx xxx xxx
+  //-- LIM
+  //--    op  DR  ___imm9____  
+  //--   1101 xxx xxx xxx xxx
+  //-- LEA
+  //--    op  DR  ___????____  
+  //--   1110 xxx xxx xxx xxx
+  //-- LSB
+  //--   	op  DR	. __imm8___
+  //--   0010 xxx x xxxx xxxx
+  //-- MSB
+  //--    op  DR  . __imm8___
+  //--   0011 xxx x xxxx xxxx
+  //--------------------------
+  //------------------------
   //-- Global Control Signals
   //------------------------
   /**/
   /**/ assign pipe_we = 1;
 
   or or_2(net_321, sel[1], net_594, net_416);
-
-
   or or_5(clock, clk, clk1, clk2, in);
-
-
-  foo_4__DFFE16 ACC(.D(net_454[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 ACC(.D(net_454[15:0]), .clk(clk), .e(pipe_we), 
       .Q(ACC_out[15:0]));
-
-
-  foo_4__ALU ALU(.A(test_wire_2[15:0]), .B(test_wire[15:0]), 
+  SimpleProcessor__ALU ALU(.A(test_wire_2[15:0]), .B(test_wire[15:0]), 
       .func(ALU_ctl[2:0]), .out(net_454[15:0]));
-
-
-  foo_4__DFFE16 CTL_Reg(.D(CTL[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 CTL_Reg(.D(CTL[15:0]), .clk(clk), .e(pipe_we), 
       .Q(net_544[15:0]));
-
-
-  foo_4__Instr_Decode DECODE(.clk(clk), .opcode(IR[15:12]), .out(CTL[15:0]));
-  foo_4__DFFE16 DFFE16_1(.D(IR[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__Instr_Decode DECODE(.clk(clk), .opcode(IR[15:12]), 
+      .out(CTL[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_1(.D(IR[15:0]), .clk(clk), .e(pipe_we), 
       .Q(IR_1[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_2(.D(IR_1[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 DFFE16_2(.D(IR_1[15:0]), .clk(clk), .e(pipe_we), 
       .Q(IR_2[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_3(.D(SR1[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 DFFE16_3(.D(SR1[15:0]), .clk(clk), .e(pipe_we), 
       .Q(test_wire_2[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_4(.D(SR2[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 DFFE16_4(.D(SR2[15:0]), .clk(clk), .e(pipe_we), 
       .Q(test_wire[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_6(.D(imm_16bit[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 DFFE16_6(.D(imm_16bit[15:0]), .clk(clk), .e(pipe_we), 
       .Q(net_717[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_7(.D(next_PC[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 DFFE16_7(.D(next_PC[15:0]), .clk(clk), .e(pipe_we), 
       .Q(net_653[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_8(.D(net_653[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 DFFE16_8(.D(net_653[15:0]), .clk(clk), .e(pipe_we), 
       .Q(net_654[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_9(.D(net_654[15:0]), .clk(clk), .e(pipe_we), 
+  SimpleProcessor__DFFE16 DFFE16_9(.D(net_654[15:0]), .clk(clk), .e(pipe_we), 
       .Q(net_656[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_10(.D({ \net_715[15] ,  \net_715[15] ,  \net_715[15] ,  
+  SimpleProcessor__DFFE16 DFFE16_10(.D({ \net_715[15] ,  \net_715[15] ,  
       \net_715[15] ,  \net_715[15] ,  \net_715[15] ,  \net_715[15] ,  
-      \net_715[15] ,  \net_715[7] ,  \net_715[6] ,  \net_715[5] ,  \net_715[4] 
-      ,  \net_715[3] ,  \net_715[2] ,  \net_715[1] ,  \net_715[0] }), 
-      .clk(clk), .e(pipe_we), .Q(net_716[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_11(.D({ \net_718[15] ,  \net_718[15] ,  \net_718[15] ,  
+      \net_715[15] ,  \net_715[15] ,  \net_715[7] ,  \net_715[6] ,  \net_715[5] 
+      ,  \net_715[4] ,  \net_715[3] ,  \net_715[2] ,  \net_715[1] ,  
+      \net_715[0] }), .clk(clk), .e(pipe_we), .Q(net_716[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_11(.D({ \net_718[15] ,  \net_718[15] ,  
       \net_718[15] ,  \net_718[15] ,  \net_718[15] ,  \net_718[15] ,  
-      \net_718[15] ,  \net_718[7] ,  \net_718[6] ,  \net_718[5] ,  \net_718[4] 
-      ,  \net_718[3] ,  \net_718[2] ,  \net_718[1] ,  \net_718[0] }), 
-      .clk(clk), .e(pipe_we), .Q(net_700[15:0]));
-
-
-  foo_4__DFFE16 DFFE16_12(.D({net_719[15], net_719[14], net_719[13], 
+      \net_718[15] ,  \net_718[15] ,  \net_718[7] ,  \net_718[6] ,  \net_718[5] 
+      ,  \net_718[4] ,  \net_718[3] ,  \net_718[2] ,  \net_718[1] ,  
+      \net_718[0] }), .clk(clk), .e(pipe_we), .Q(net_700[15:0]));
+  SimpleProcessor__DFFE16 DFFE16_12(.D({net_719[15], net_719[14], net_719[13], 
       net_719[12], net_719[11], net_719[10], net_719[9], net_719[8], 
       net_719[7], net_719[7], net_719[7], net_719[7], net_719[7], net_719[7], 
       net_719[7], net_719[7]}), .clk(clk), .e(pipe_we), .Q(net_698[15:0]));
-
-
-  foo_4__DMEM DMEM(.RW(DMEM_we), .addr(test_wire[15:0]), .clk(clk), 
+  SimpleProcessor__DMEM DMEM(.RW(DMEM_we), .addr(test_wire[15:0]), .clk(clk), 
       .in(test_wire_2[15:0]), .out(DMEM_out[15:0]));
-
-
-  foo_4__bus16_splitter Execute_Stage_Controls(.bus(CTL[15:0]), 
+  SimpleProcessor__bus16_splitter Execute_Stage_Controls(.bus(CTL[15:0]), 
       .bus0(ALU_ctl[0]), .bus1(ALU_ctl[1]), .bus10(net_530), .bus11(net_531), 
       .bus12(net_532), .bus13(net_533), .bus14(net_534), .bus15(net_535), 
       .bus2(ALU_ctl[2]), .bus3(net_523), .bus4(net_524), .bus5(net_525), 
       .bus6(DMEM_we), .bus7(imm_sel[0]), .bus8(imm_sel[1]), .bus9(net_529));
-
-
-  foo_4__IMEM IMEM(.addr(PC[15:0]), .clk(clk), .out(IR[15:0]));
-
-
+  SimpleProcessor__IMEM IMEM(.addr(PC[15:0]), .clk(clk), .out(IR[15:0]));
   gateLevelParts__imm_LSB Imm_LSB_0(.in(IR[7:0]), .\out[15] ( \net_718[15] ), 
       .\out[7] ( \net_718[7] ), .\out[6] ( \net_718[6] ), .\out[5] ( 
       \net_718[5] ), .\out[4] ( \net_718[4] ), .\out[3] ( \net_718[3] ), 
       .\out[2] ( \net_718[2] ), .\out[1] ( \net_718[1] ), .\out[0] ( 
       \net_718[0] ));
-
-
-  foo_4__DFFE16 PC_(.D(next_PC[15:0]), .clk(clk), .e(pipe_we), .Q(PC[15:0]));
-
-
+  SimpleProcessor__DFFE16 PC_(.D(next_PC[15:0]), .clk(clk), .e(pipe_we), 
+      .Q(PC[15:0]));
   gateLevelParts__incr_16 PC_incr(.x(PC[15:0]), .s(next_PC[15:0]));
-
-
   icoboard__PMOD8LD_2_ico1_0_P1 PMOD8LD__0(.LED0(disp[0]), .LED1(disp[1]), 
       .LED2(disp[2]), .LED3(disp[3]), .LED4(disp[4]), .LED5(disp[5]), 
       .LED6(disp[6]), .LED7(disp[7]), .p1(A5), .p10(B5), .p2(A2), .p3(C3), 
       .p4(B4), .p7(B7), .p8(B6), .p9(B3));
-
-
   icoboard__PMODBTN_2_ico1_0_P2B PMODBTN__0(.p1(B8), .p2(A9), .p3(A10), 
       .p4(A11), .BTN0(clk), .BTN1(clk1), .BTN2(in), .BTN3(clk2));
-
-
   icoboard__PMODSW_2_ico1_0_P2A PMODSW_2_0(.p1(D8), .p2(B9), .p3(B10), 
       .p4(B11), .SW_1(sel[0]), .SW_2(sel[1]), .SW_3(sel[2]), .SW_4(swap));
-
-
-  foo_4__RegFile REGFILE(.DR(IR_2[11:9]), .S1(IR[8:6]), .S2(IR[2:0]), 
+  SimpleProcessor__RegFile REGFILE(.DR(IR_2[11:9]), .S1(IR[8:6]), .S2(IR[2:0]), 
       .clk(clk), .in(WB_out[15:0]), .we(Reg_we), .SR1(SR1[15:0]), 
       .SR2(SR2[15:0]));
-
-
-  foo_4__bus16_splitter WB_stage_Controls(.bus(net_544[15:0]), .bus0(net_510), 
-      .bus1(net_511), .bus10(net_517), .bus11(net_518), .bus12(net_519), 
-      .bus13(net_520), .bus14(net_521), .bus15(net_522), .bus2(net_512), 
-      .bus3(WB_sel[0]), .bus4(WB_sel[1]), .bus5(Reg_we), .bus6(net_513), 
-      .bus7(net_514), .bus8(net_515), .bus9(net_516));
-
-
+  SimpleProcessor__bus16_splitter WB_stage_Controls(.bus(net_544[15:0]), 
+      .bus0(net_510), .bus1(net_511), .bus10(net_517), .bus11(net_518), 
+      .bus12(net_519), .bus13(net_520), .bus14(net_521), .bus15(net_522), 
+      .bus2(net_512), .bus3(WB_sel[0]), .bus4(WB_sel[1]), .bus5(Reg_we), 
+      .bus6(net_513), .bus7(net_514), .bus8(net_515), .bus9(net_516));
   gateLevelParts__imm_MSB imm_MSB_0(.in(IR[7:0]), .out(net_719[15:7]));
-
-
   gateLevelParts__mux16_2x1 mux16_2x_0(.s(swap), .x0(net_460[15:0]), 
       .x1(net_434[15:0]), .y(disp[15:0]));
-
-
   gateLevelParts__mux16_4x1 mux16_4x_0(.s(WB_sel[1:0]), .x00(net_656[15:0]), 
       .x01(DMEM_out[15:0]), .x10(ACC_out[15:0]), .x11(net_717[15:0]), 
       .y(WB_out[15:0]));
-
-
   gateLevelParts__mux16_4x1 mux16_4x_2(.s(imm_sel[1:0]), .x00(net_716[15:0]), 
       .x01(net_700[15:0]), .x10(net_698[15:0]), .x11(mux16_4x_2_x11[15:0]), 
       .y(imm_16bit[15:0]));
-
-
   gateLevelParts__mux16_8x1 mux16_8x_0(.s(sel[2:0]), .x000(test_wire_2[15:0]), 
       .x001(IR[15:0]), .x010(CTL[15:0]), .x011(test_wire[15:0]), 
       .x100(DMEM_out[15:0]), .x101(SR1[15:0]), .x110(SR2[15:0]), 
       .x111(WB_out[15:0]), .y(net_460[15:0]));
-
-
   icoboard__ico1_0_onboard_btn_led onboard__0(.K11(K11), .LED1(sel[0]), 
       .LED2(net_321), .LED3(clock), .P13(P13), .C8(C8), .F7(F7), .K9(K9), 
       .butn1(net_594), .butn2(net_416));
- 
-
- gateLevelParts__sext_9x16 sext_9x1_0(.in(IR[8:0]), .\out[15] ( \net_715[15] 
+  gateLevelParts__sext_9x16 sext_9x1_0(.in(IR[8:0]), .\out[15] ( \net_715[15] 
       ), .\out[7] ( \net_715[7] ), .\out[6] ( \net_715[6] ), .\out[5] ( 
       \net_715[5] ), .\out[4] ( \net_715[4] ), .\out[3] ( \net_715[3] ), 
       .\out[2] ( \net_715[2] ), .\out[1] ( \net_715[1] ), .\out[0] ( 
       \net_715[0] ));
-
-
-  foo_4__swap_bytes_16 swap_byt_2(.in(net_460[15:0]), .out(net_434[15:0]));
-
+  SimpleProcessor__swap_bytes_16 swap_byt_2(.in(net_460[15:0]), 
+      .out(net_434[15:0]));
 endmodule   /* SimpleProcessor */
