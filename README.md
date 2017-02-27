@@ -3,6 +3,7 @@
 A processor designed using a VLSI electric design automation tool called Electric. <br \> Available here
 http://www.staticfreesoft.com/electric.html
 
+I designed the architecture of the processor from the gate-level upwards, it is still a work in progress.
 The verilog code produced by the library is available in SimpleProcessor.v and was tested on an Icoboard and Rasberry Pi.<br \> 
   
 
